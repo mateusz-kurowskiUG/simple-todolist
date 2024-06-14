@@ -19,7 +19,7 @@ FROM quay.io/keycloak/keycloak
 
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
-# COPY ./realm-export.json /opt/keycloak/data/import/realm.json
+COPY ./realm-export.json /opt/keycloak/data/import/keycloak.json
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD [ "start-dev", "--optimized", "--import-realm" ]
+CMD [ "start-dev", "--import-realm" ]

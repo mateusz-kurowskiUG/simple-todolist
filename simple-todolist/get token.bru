@@ -1,0 +1,22 @@
+meta {
+  name: get token
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8080/realms/simpleTodoList/protocol/openid-connect/auth
+  body: none
+  auth: oauth2
+}
+
+auth:oauth2 {
+  grant_type: authorization_code
+  callback_url: bruno://auth
+  authorization_url: http://localhost:8080/realms/simpleTodoList/protocol/openid-connect/auth
+  access_token_url: http://localhost:8080/realms/simpleTodoList/protocol/openid-connect/token
+  client_id: todolist-backend
+  client_secret: GbSeZg6FlSMJiCnbF17MgZSPLN4Y2mwQ
+  scope: 
+  pkce: false
+}
