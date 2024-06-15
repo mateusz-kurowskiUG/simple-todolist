@@ -1,0 +1,19 @@
+meta {
+  name: Add a task to todolist
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:5000/todolists/add
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "todoListId": "666d78c6e85e7133faf20500",  // Replace with actual Todo List ID
+    "newTask": "New Task"
+  }
+  
+}

@@ -1,14 +1,5 @@
 services:
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-    - mongo_data:/data/db
-    ports:
-      - "27017:27017"
+
   postgres:
     image: postgres
     restart: always
@@ -20,7 +11,6 @@ services:
     environment:
       POSTGRES_PASSWORD: example
     
-
   keycloak:
     restart: always
     depends_on:
@@ -33,6 +23,17 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
       - "8080:8080"
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+    - mongo_data:/data/db
+
+
 
   backend:
     restart: always

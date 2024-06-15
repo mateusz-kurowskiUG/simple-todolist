@@ -1,0 +1,19 @@
+meta {
+  name: remove task from todolist
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:5000/todolists/delete
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "todoListId": "666d78c6e85e7133faf20500",  // Replace with actual Todo List ID
+    "taskIdToRemove": "666d78c6e85e7133faf20502"  // Replace with actual Task ID
+  }
+  
+}

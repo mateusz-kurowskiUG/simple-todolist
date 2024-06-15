@@ -128,7 +128,19 @@ const getTodoList = async (id: string): Promise<ITodoList | false> => {
     return false;
   }
 };
-
+const getTodolistsByUser = async (userId: string): Promise<ITodoList[]> => {
+  const todolists = await todoListModel.find({ userId });
+  return todolists.map(({ _id, userId, title, deadline, createdAt, tasks }) => {
+    return {
+      _id: _id.toString(),
+      userId,
+      title,
+      deadline,
+      createdAt,
+      tasks: tasks.toObject(),
+    };
+  });
+};
 const TodoLists = {
   createTodoList,
   deleteTodolist,
@@ -136,6 +148,7 @@ const TodoLists = {
   removeFromTodoList,
   updateTodoList,
   getTodoList,
+  getTodolistsByUser,
 };
 
 export default TodoLists;

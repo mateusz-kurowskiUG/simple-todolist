@@ -1,0 +1,29 @@
+meta {
+  name: update todolist
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:5000/todolists
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "_id": "666d78c6e85e7133faf20500",  // Replace with actual Todo List ID
+    "userId": "user123",
+    "title": "Updated Todo List",
+    "deadline": "2024-12-31T23:59:59Z",
+    "tasks": [
+      {
+        "text": "Updated Task 1"
+      },
+      {
+        "text": "Updated Task 2"
+      }
+    ]
+  }
+  
+}

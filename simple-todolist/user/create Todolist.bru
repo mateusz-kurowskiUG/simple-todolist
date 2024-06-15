@@ -1,0 +1,28 @@
+meta {
+  name: create Todolist
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5000/todolists
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": "user123",
+    "title": "Sample Todo List",
+    "deadline": "2024-12-31T23:59:59Z",
+    "tasks": [
+      {
+        "text": "Task 1"
+      },
+      {
+        "text": "Task 2"
+      }
+    ]
+  }
+  
+}
