@@ -34,14 +34,16 @@ const removeFromTodoList = async (
 ): Promise<ITodoList | false> => {
   try {
     const todolist = await todoListModel.findOne({ _id: update.todoListId });
-    if (!todolist) throw Error("Todolist not found");
+    if (!todolist) throw new Error("Todolist not found");
 
-    const taskToDelete = await todoListModel.findOne({
-      _id: update.taskIdToRemove,
-    });
-    if (!taskToDelete) return false;
-    taskToDelete.tasks.pull({ _id: update.taskIdToRemove });
-    await taskToDelete.save();
+    const taskIndex = todolist.tasks.findIndex(
+      (task) => task._id?.toString() === update.taskIdToRemove
+    );
+    if (taskIndex === -1) return false;
+
+    todolist.tasks.splice(taskIndex, 1);
+    await todolist.save();
+
     const { _id, userId, title, deadline, createdAt, tasks } = todolist;
     return {
       _id: _id.toString(),
@@ -52,6 +54,7 @@ const removeFromTodoList = async (
       tasks: tasks.toObject(),
     };
   } catch (e) {
+    console.log(e);
     return false;
   }
 };
@@ -80,11 +83,59 @@ const addToTodoList = async (
     return false;
   }
 };
+const updateTodoList = async (
+  todolist: ITodoList
+): Promise<ITodoList | false> => {
+  try {
+    const updatedTodolist = await todoListModel.findByIdAndUpdate(
+      todolist._id,
+      todolist,
+      { new: true }
+    );
+
+    if (!updatedTodolist) throw Error("Todolist not found");
+
+    const { _id, userId, title, deadline, createdAt, tasks } = updatedTodolist;
+    return {
+      _id: _id.toString(),
+      userId,
+      title,
+      deadline,
+      createdAt,
+      tasks: tasks.toObject(),
+    };
+  } catch (e) {
+    return false;
+  }
+};
+
+const getTodoList = async (id: string): Promise<ITodoList | false> => {
+  try {
+    const todolist = await todoListModel.findById(id);
+
+    if (!todolist) throw Error("Todolist not found");
+
+    const { _id, userId, title, deadline, createdAt, tasks } = todolist;
+    return {
+      _id: _id.toString(),
+      userId,
+      title,
+      deadline,
+      createdAt,
+      tasks: tasks.toObject(),
+    };
+  } catch (e) {
+    return false;
+  }
+};
+
 const TodoLists = {
   createTodoList,
   deleteTodolist,
   addToTodoList,
   removeFromTodoList,
+  updateTodoList,
+  getTodoList,
 };
 
 export default TodoLists;

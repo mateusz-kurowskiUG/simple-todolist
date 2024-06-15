@@ -13,10 +13,13 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@keycloak/keycloak-admin-client": "^25.0.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
