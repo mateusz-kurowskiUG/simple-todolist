@@ -5,8 +5,9 @@ import bodyParser from "body-parser";
 import connectToMongo from "./db/connect";
 import usersRouter from "./routes/users";
 import todoListsRouter from "./routes/todolists";
-import decodeJwt from "./middleware/decodeJwt";
 import isAdmin from "./middleware/admin";
+import adminRouter from "./routes/admin";
+import isAuthenticated from "./middleware/authenticated";
 
 const app = express();
 const port = process.env.BACKEND_PORT || 5000;
@@ -19,16 +20,16 @@ const keycloak = new Keycloak({});
 
 const router = Router();
 
-router.use("/users", usersRouter);
-router.use("/todolists", todoListsRouter);
-
+router.use("/api/users", usersRouter);
+router.use("/api/todolists", todoListsRouter);
+router.use("/api/admin", adminRouter);
 app.use(router);
 
-app.get("/admin", [decodeJwt, isAdmin], (req, res) => {
+app.get("/admin", [isAuthenticated, isAdmin], (req, res) => {
   res.send("Hello Admin");
 });
 
-app.get("/authenticated", decodeJwt, (req, res) => {
+app.get("/authenticated", isAuthenticated, (req, res) => {
   res.send(`Hello, user with ID: ${req.token.sub}`);
 });
 

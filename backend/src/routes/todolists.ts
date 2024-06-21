@@ -3,17 +3,17 @@ import type IAddToTodoList from "../interfaces/IAddToTodolist";
 import type IRemoveFromTodoList from "../interfaces/IRemoveFromTodolist";
 import TodoLists from "../db/todolists";
 import type { ITodoList } from "../interfaces/ITodoList";
-import decodeJwt from "../middleware/decodeJwt";
 import isAuthenticated from "../middleware/authenticated";
 
 const todoListsRouter = Router();
 
 todoListsRouter.post(
   "/",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
     const { title, deadline, tasks } = req.body;
-    const { userId } = req;
+    const { token } = req;
+    const { userId } = token;
     if (!userId || !title || !deadline || !tasks)
       return res.status(400).send("Missing required fields");
 
@@ -33,10 +33,11 @@ todoListsRouter.post(
 
 todoListsRouter.delete(
   "/:id",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { userId } = req;
+    const { token } = req;
+    const { userId } = token;
 
     const todolist = await TodoLists.getTodoList(id);
 
@@ -52,9 +53,10 @@ todoListsRouter.delete(
 
 todoListsRouter.post(
   "/add",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { userId } = req.token;
+    const { token } = req;
+    const { userId } = token;
     const { todoListId, newTask } = req.body as IAddToTodoList;
 
     const todolist = await TodoLists.getTodoList(todoListId);
@@ -79,9 +81,10 @@ todoListsRouter.post(
 
 todoListsRouter.post(
   "/delete",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { userId } = req.token;
+    const { token } = req;
+    const { userId } = token;
     const { todoListId, taskIdToRemove } = req.body as IRemoveFromTodoList;
 
     const todolist = await TodoLists.getTodoList(todoListId);
@@ -107,9 +110,10 @@ todoListsRouter.post(
 
 todoListsRouter.patch(
   "/",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { userId } = req;
+    const { token } = req;
+    const { userId } = token;
     const { _id, title, deadline, tasks } = req.body as ITodoList;
 
     if (!_id || !userId) {
@@ -136,9 +140,10 @@ todoListsRouter.patch(
 
 todoListsRouter.get(
   "/user",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { userId } = req;
+    const { token } = req;
+    const { userId } = token;
     if (!userId) return res.status(403).json({ message: "not authenticated" });
     const todoList = await TodoLists.getTodolistsByUser(userId);
 
@@ -147,11 +152,11 @@ todoListsRouter.get(
 );
 todoListsRouter.get(
   "/:id",
-  [decodeJwt, isAuthenticated],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { userId } = req;
-
+    const { token } = req;
+    const { userId } = token;
     const todoList = await TodoLists.getTodoList(id);
 
     if (todoList && todoList.userId === userId)
