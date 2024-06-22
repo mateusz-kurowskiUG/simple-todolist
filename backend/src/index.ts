@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import cors from "cors";
-import Keycloak from "keycloak-connect";
 import bodyParser from "body-parser";
 import connectToMongo from "./db/connect";
 import usersRouter from "./routes/users";
@@ -14,9 +13,6 @@ const port = process.env.BACKEND_PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-const keycloak = new Keycloak({});
-// app.use(keycloak.middleware()); // Uncomment if Keycloak middleware is needed
 
 const router = Router();
 

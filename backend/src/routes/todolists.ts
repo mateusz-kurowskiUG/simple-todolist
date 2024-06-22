@@ -12,9 +12,10 @@ todoListsRouter.post(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const { title, deadline, tasks } = req.body;
-    const { token } = req;
-    const { userId } = token;
-    if (!userId || !title || !deadline || !tasks)
+    const {
+      token: { sub: userId },
+    } = req;
+    if (!userId || !title || !deadline)
       return res.status(400).send("Missing required fields");
 
     const todolist = await TodoLists.createTodoList({
@@ -22,7 +23,7 @@ todoListsRouter.post(
       title,
       deadline: new Date(deadline),
       createdAt: new Date(),
-      tasks,
+      tasks: tasks || [],
     });
 
     if (todolist) return res.status(201).json(todolist);
@@ -36,8 +37,9 @@ todoListsRouter.delete(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { token } = req;
-    const { userId } = token;
+    const {
+      token: { sub: userId },
+    } = req;
 
     const todolist = await TodoLists.getTodoList(id);
 
@@ -52,24 +54,24 @@ todoListsRouter.delete(
 );
 
 todoListsRouter.post(
-  "/add",
+  "/:todoListId/add",
   [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { token } = req;
-    const { userId } = token;
-    const { todoListId, newTask } = req.body as IAddToTodoList;
+    const {
+      token: { sub: userId },
+    } = req;
+    const { todoListId } = req.params;
+    const { task }: { task: string } = req.body;
+    if (!todoListId || !task)
+      return res
+        .status(400)
+        .json({ message: "no todolist id or new task providcd .ed." });
 
     const todolist = await TodoLists.getTodoList(todoListId);
     if (!todolist || todolist.userId !== userId)
       return res.status(404).json({ message: "Todolist does not exist" });
 
-    if (!todoListId || !newTask)
-      return res.status(400).send("Missing required fields");
-
-    const updatedTodoList = await TodoLists.addToTodoList({
-      todoListId,
-      newTask,
-    });
+    const updatedTodoList = await TodoLists.addToTodoList(todoListId, task);
 
     if (updatedTodoList) {
       res.status(200).json(updatedTodoList);
@@ -80,30 +82,34 @@ todoListsRouter.post(
 );
 
 todoListsRouter.post(
-  "/delete",
+  "/:todoListId/:taskId/delete",
   [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { token } = req;
-    const { userId } = token;
-    const { todoListId, taskIdToRemove } = req.body as IRemoveFromTodoList;
-
+    const {
+      token: { sub: userId },
+    } = req;
+    const { todoListId, taskId } = req.params;
+    if (!todoListId || !taskId)
+      return res
+        .status(400)
+        .json({ message: "No todolist id or task id provided." });
     const todolist = await TodoLists.getTodoList(todoListId);
     if (!todolist || todolist.userId !== userId)
       return res.status(404).json({ message: "Todolist does not exist" });
 
-    if (!todoListId || !taskIdToRemove) {
+    if (!todoListId || !taskId) {
       return res.status(400).send("Missing required fields");
     }
 
     const updatedTodoList = await TodoLists.removeFromTodoList({
       todoListId,
-      taskIdToRemove,
+      taskIdToRemove: taskId,
     });
 
     if (updatedTodoList) {
       res.status(200).json(updatedTodoList);
     } else {
-      res.status(500).send("Failed to remove task from todo list");
+      res.status(404).send("Task not found");
     }
   }
 );
@@ -112,8 +118,9 @@ todoListsRouter.patch(
   "/",
   [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { token } = req;
-    const { userId } = token;
+    const {
+      token: { sub: userId },
+    } = req;
     const { _id, title, deadline, tasks } = req.body as ITodoList;
 
     if (!_id || !userId) {
@@ -142,8 +149,10 @@ todoListsRouter.get(
   "/user",
   [isAuthenticated],
   async (req: Request, res: Response) => {
-    const { token } = req;
-    const { userId } = token;
+    const {
+      token: { sub: userId },
+    } = req;
+
     if (!userId) return res.status(403).json({ message: "not authenticated" });
     const todoList = await TodoLists.getTodolistsByUser(userId);
 
@@ -155,8 +164,9 @@ todoListsRouter.get(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { token } = req;
-    const { userId } = token;
+    const {
+      token: { sub: userId },
+    } = req;
     const todoList = await TodoLists.getTodoList(id);
 
     if (todoList && todoList.userId === userId)

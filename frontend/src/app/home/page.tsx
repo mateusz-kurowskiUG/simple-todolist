@@ -2,16 +2,10 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import HomeLayout from "./components/home-layout";
+import HomeLayout from "./_components/home-layout";
 
 const Page = () => {
-	const {
-		data: session,
-		status,
-	} = useSession(
-		// {required:true}
-	);
-	console.log(session);
+	const { data: session, status } = useSession({ required: true });
 
 	const router = useRouter();
 

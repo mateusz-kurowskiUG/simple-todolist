@@ -21,8 +21,8 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 		queryKey: ["todolist"],
 		queryFn: () => getTodoListById(params.todolistId, session.token),
 	});
-	if (isLoading) return <p>Loading...</p>;
-	if (error) return <p>{error.message}</p>;
+	if (isLoading) { return <p>Loading...</p>; }
+	if (error) { return <p>{error.message}</p>; }
 
 	const deleteItem = async (id: string, accessToken: string) => {
 		try {
@@ -41,7 +41,7 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 			});
 		}
 	};
-	if (!data)
+	if (!data) {
 		return (
 			<>
 				<div className="text-center text-2xl">
@@ -52,6 +52,7 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 				</div>
 			</>
 		);
+	}
 
 	return (
 		<div className="p-4 space-y-5">
@@ -79,7 +80,6 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 			<div className="flex justify-between">
 				<div>Action:</div>
 				<div>
-					{/* TODO: DELETE */}
 					<Button
 						onClick={() => deleteItem(data._id, session.token)}
 						className="bg-red-700"

@@ -33,7 +33,7 @@ const isAuthenticated = async (
       `-----BEGIN PUBLIC KEY-----\n${publicKey}\n-----END PUBLIC KEY-----`,
       { algorithms: ["RS256"] }
     );
-    console.log("Decoded JWT:", decoded);
+    // console.log("Decoded JWT:", decoded);
     req.token = decoded; // Attach the decoded token to the request object
     next(); // Proceed to the next middleware or route handler
   } catch (err) {

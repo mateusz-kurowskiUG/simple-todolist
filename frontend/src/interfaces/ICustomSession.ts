@@ -1,8 +1,9 @@
-import ISessionUser from "./ISession";
+import type { Session } from "next-auth";
+import type ISessionUser from "./ISession";
 
-interface CustomSession {
+interface ICustomSession extends Session {
   user: ISessionUser;
   token: string;
 }
 
-export default CustomSession;
+export default ICustomSession;
