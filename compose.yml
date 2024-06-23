@@ -49,12 +49,6 @@ services:
       - mongo
     working_dir: /backend
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8081
-
   mongo-express:
     image: mongo-express
     restart: always
@@ -66,6 +60,18 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+      - keycloak
+    ports:
+      - 3000:3000
+    env_file:
+      - ./frontend/.env
+      
 volumes:
   mongo_data:
   postgres_data:

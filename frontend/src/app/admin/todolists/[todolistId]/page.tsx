@@ -26,7 +26,7 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 
 	const deleteItem = async (id: string, accessToken: string) => {
 		try {
-			await axios.delete(`http://localhost:5000/api/admin/todolists/${id}`, {
+			await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/todolists/${id}`, {
 				headers: { Authorization: `Bearer ${accessToken}` },
 			});
 			toast({

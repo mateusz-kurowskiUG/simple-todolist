@@ -50,7 +50,7 @@ const NewTodoListForm = () => {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const result = await axios.post<ITodoList>(
-				"http://localhost:5000/api/todolists/",
+				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/`,
 				{ ...values },
 				{ headers: { Authorization: `Bearer ${session.token}` } },
 			);

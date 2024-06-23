@@ -1,13 +1,13 @@
-import type { AuthOptions, Session } from "next-auth";
+import type { Session } from "next-auth";
 import NextAuth from "next-auth/next";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import { jwtDecode } from "jwt-decode";
 import type { IJwtHeader } from "@/interfaces/IJwtHeader";
-import type { CustomSession } from "@/interfaces/ICustomSession";
+import type  ICustomSession  from "@/interfaces/ICustomSession";
 import type { IToken } from "@/interfaces/IToken";
 import axios from "axios";
 
-export const authOptions: AuthOptions = {
+export const authOptions = {
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_CLIENT_ID!,
@@ -73,13 +73,13 @@ export const authOptions: AuthOptions = {
       }
     },
     async session({ session, token }: { session: Session; token: IToken }) {
-      (session as unknown as CustomSession).user = {
+      (session as unknown as ICustomSession).user = {
         id: token.sid!,
         email: token.email!,
         name: token.name!,
         roles: token.roles!,
       };
-      (session as unknown as CustomSession).token = token.accessToken!;
+      (session as unknown as ICustomSession).token = token.accessToken!;
 
       return session;
     },

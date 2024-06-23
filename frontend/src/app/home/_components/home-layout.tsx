@@ -28,7 +28,10 @@ const HomeLayout = () => {
 		return <p>{error.message}</p>;
 	}
 
-	return <YourTodoLists />;
+	return <>
+	<p>{process.env.NEXT_PUBLIC_NEXT_PUBLIC_BACKEND_URL}</p>
+	<YourTodoLists />
+	</>
 };
 
 export default HomeLayout;

@@ -9,6 +9,7 @@ import TodoListItem from "./_components/todolist-item";
 import { createId } from "@paralleldrive/cuid2";
 import TodolistTable from "./_components/todolist-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
 	const { data: session } = useSession({ required: true }) as unknown as {
@@ -22,7 +23,15 @@ const Page = () => {
 		queryKey: ["todolists"],
 		queryFn: () => getTodolists(session.token),
 	});
-
+	const router = useRouter()
+	if (!session) {return <p>Loading...</p>}
+	const { user } = session;
+	const { roles } = user;
+  
+	if (!roles.find((role)=>role==="admin")){
+	  router.push("/home")
+	  return <p className="text-2xl text-center p-10">Not Authorized</p>
+	}
 	if (isLoading) return <p>Loading...</p>;
 	if (error) return error.message;
 	if (!queryData) return "no data";

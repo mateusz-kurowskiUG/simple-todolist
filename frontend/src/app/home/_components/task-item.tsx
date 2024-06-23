@@ -10,7 +10,7 @@ import React, { useState } from "react";
 const TaskItem = ({ task }: { task: ITask }) => {
 	const { data: session } = useSession();
 	const deleteTask = (taskId: string, accessToken: string) =>
-		axios.delete(`http://localhost:5000/api/todolists/${taskId}`, {
+		axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/${taskId}`, {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		});
 
