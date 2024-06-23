@@ -10,17 +10,10 @@ const AuthMenu = () => {
 	return (
 		<>
 			<NavBar />
-			<Tabs defaultValue="signup" className="w-full">
+			<Tabs defaultValue="signin" className="w-full">
 				<TabsList className="w-full justify-evenly">
-					<TabsTrigger value="signup">Sign up</TabsTrigger>
 					<TabsTrigger value="signin">Sign in</TabsTrigger>
 				</TabsList>
-				<TabsContent value="signup">
-					<p className="text-center">Create a new account.</p>
-					<div className="my-2 p-2">
-						<RegisterForm />
-					</div>
-				</TabsContent>
 				<TabsContent value="signin">
 					<p className="text-center">Sign in using one of providers below:</p>
 					<div className="m-6 p-2 ">

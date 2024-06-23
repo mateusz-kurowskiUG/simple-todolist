@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import type ITodoList from "@/app/interfaces/ITodoList";
+import { useUserTodolistsStore } from "../_stores/todolist-store";
 
 const formSchema = z.object({
 	title: z.string().min(3, {
@@ -38,6 +39,7 @@ const formSchema = z.object({
 const NewTodoListForm = () => {
 	const { toast } = useToast();
 	const router = useRouter();
+	const { todoLists, setTodoLists } = useUserTodolistsStore();
 	const { data: session } = useSession({ required: true });
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -49,17 +51,20 @@ const NewTodoListForm = () => {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			const result = await axios.post<ITodoList>(
-				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/`,
-				{ ...values },
-				{ headers: { Authorization: `Bearer ${session.token}` } },
-			);
+			const result = await axios
+				.post<ITodoList>(
+					`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/`,
+					{ ...values },
+					{ headers: { Authorization: `Bearer ${session.token}` } },
+				)
+				.then((res) => res.data);
 			toast({
 				title: "Created todolist.",
 				description: "Redirecting to it in 5 seconds...",
 			});
+			setTodoLists([...todoLists, result]);
 			setTimeout(() => {
-				router.push(`./home/${result.data._id}`);
+				router.push(`/home/${result._id}`);
 			}, 5000);
 		} catch (e) {
 			toast({ title: "Creating todolist failed." });

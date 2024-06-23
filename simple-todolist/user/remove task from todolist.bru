@@ -4,10 +4,14 @@ meta {
   seq: 5
 }
 
-post {
-  url: http://localhost:5000/todolists/delete
-  body: json
-  auth: none
+delete {
+  url: http://localhost:5000/api/todolists/666d78c6e85e7133faf20500/666d78c6e85e7133faf20502
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: asda
 }
 
 body:json {

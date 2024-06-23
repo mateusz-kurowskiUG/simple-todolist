@@ -15,7 +15,12 @@ const TodoListItem = ({ todoList }: { todoList: ITodoList }) => {
 			</CardHeader>
 			<CardContent>
 				{todoList.tasks.map((task) => (
-					<TaskItem task={task} key={createId()} />
+					<TaskItem
+						global={true}
+						todoListId={todoList._id}
+						task={task}
+						key={createId()}
+					/>
 				))}
 			</CardContent>
 		</Card>

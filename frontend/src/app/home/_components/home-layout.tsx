@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useUserTodolistsStore } from "../_stores/todolist-store";
 
 const HomeLayout = () => {
-	const { setTodolists } = useUserTodolistsStore();
+	const { setTodoLists } = useUserTodolistsStore();
 	const { data: session } = useSession({ required: true });
 
 	const { data, isLoading, error } = useQuery({
@@ -16,9 +16,9 @@ const HomeLayout = () => {
 
 	useEffect(() => {
 		if (data?.length) {
-			setTodolists(data);
+			setTodoLists(data);
 		}
-	}, [data, setTodolists]);
+	}, [data, setTodoLists]);
 
 	if (isLoading) {
 		return <p>Loading...</p>;
@@ -28,10 +28,7 @@ const HomeLayout = () => {
 		return <p>{error.message}</p>;
 	}
 
-	return <>
-	<p>{process.env.NEXT_PUBLIC_NEXT_PUBLIC_BACKEND_URL}</p>
-	<YourTodoLists />
-	</>
+	return <YourTodoLists />;
 };
 
 export default HomeLayout;

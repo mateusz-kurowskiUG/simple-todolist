@@ -5,10 +5,14 @@ import AuthMenu from "./auth-menu";
 import { useRouter } from "next/navigation";
 
 const AuthLayout = () => {
-	const { data: session, status } = useSession();
+	const { status } = useSession();
 	const router = useRouter();
-	if (session) {
+
+	if (status === "authenticated") {
 		router.push("/home");
+	}
+	if (status === "loading") {
+		return <p>Loading...</p>;
 	}
 	return <AuthMenu />;
 };

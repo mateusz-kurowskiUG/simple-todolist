@@ -6,31 +6,26 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import {
-	useCurrentTodolistStore,
-	useUserTodolistsStore,
-} from "../_stores/todolist-store";
-import type ITodoList from "@/app/interfaces/ITodoList";
+import { useCurrentTodolistStore } from "../../_stores/todolist-store";
 
-const TaskItem = ({
-	task,
-	todoListId,
-}: { task: ITask; todoListId: string }) => {
-	const { todoLists, setTodoLists, replaceTodoList } = useUserTodolistsStore();
-
+const TaskItem = ({ task }: { task: ITask }) => {
+	const { todoList, setTodoList } = useCurrentTodolistStore();
+	if (!todoList) {
+		return <p>Loading...</p>;
+	}
 	const { data: session } = useSession();
 	const deleteTask = async (taskId: string, accessToken: string) => {
 		try {
-			const updated = await axios
-				.delete<ITodoList>(
-					`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/${todoListId}/${taskId}`,
-					{
-						headers: { Authorization: `Bearer ${accessToken}` },
-					},
-				)
-				.then((res) => res.data);
-
-			replaceTodoList(updated);
+			await axios.delete(
+				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todolists/${todoList._id}/${taskId}`,
+				{
+					headers: { Authorization: `Bearer ${accessToken}` },
+				},
+			);
+			setTodoList({
+				...todoList,
+				tasks: todoList.tasks.filter((task) => task._id !== taskId),
+			});
 		} catch (e) {}
 	};
 

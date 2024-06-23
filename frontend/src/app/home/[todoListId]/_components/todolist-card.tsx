@@ -1,11 +1,16 @@
 import type ITodoList from "@/app/interfaces/ITodoList";
 import React from "react";
-import TaskItem from "../../_components/task-item";
 import { createId } from "@paralleldrive/cuid2";
+import { useCurrentTodolistStore } from "../../_stores/todolist-store";
+import TaskItem from "./task-item";
 
-const TodoListCard = ({
-	todoList: { createdAt, deadline, tasks, title },
-}: { todoList: ITodoList }) => {
+const TodoListCard = () => {
+	const {
+		todoList: { _id, createdAt, deadline, tasks, title, userId },
+	} = useCurrentTodolistStore();
+	if (!_id) {
+		return <p>Loading...</p>;
+	}
 	const creationStr = createdAt.slice(0, 10);
 	const deadlineDate = new Date(deadline).getTime();
 	const deadlineStr = deadline.slice(0, 10);

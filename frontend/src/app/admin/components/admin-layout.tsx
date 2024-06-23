@@ -8,8 +8,9 @@ const AdminLayout = () => {
     required: true,
   }) as unknown as { data: ICustomSession }; // Cast the session to your custom session type
 
-  if (!session)
+  if (!session) {
     return <p>Loading...</p>;
+  }
   const router = useRouter()
   const { user, token } = session;
   const { id, email, name, roles } = user;

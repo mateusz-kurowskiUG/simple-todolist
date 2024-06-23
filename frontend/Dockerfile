@@ -1,13 +1,15 @@
-FROM oven/bun:latest
+FROM node:latest
+
+WORKDIR /app
+COPY package.json ./
+RUN npm install
 
 COPY .env /app/
 
-WORKDIR /app
 
-COPY package.json ./
-
-RUN bun install
 
 COPY . .
 
-CMD [ "bun","dev" ]
+CMD [ "npm","run","dev" ]
+
+EXPOSE 3000

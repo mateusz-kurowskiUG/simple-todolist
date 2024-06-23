@@ -33,56 +33,7 @@ todoListsRouter.post(
 );
 
 todoListsRouter.delete(
-  "/:id",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const {
-      token: { sub: userId },
-    } = req;
-
-    const todolist = await TodoLists.getTodoList(id);
-
-    if (!todolist || todolist.userId !== userId)
-      return res.status(404).json({ message: "Todolist does not exist" });
-
-    const deleted = await TodoLists.deleteTodolist(id);
-
-    if (deleted) return res.status(200).send("Todo list deleted");
-    return res.status(404).send("Todo list not found");
-  }
-);
-
-todoListsRouter.post(
-  "/:todoListId/add",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    const {
-      token: { sub: userId },
-    } = req;
-    const { todoListId } = req.params;
-    const { task }: { task: string } = req.body;
-    if (!todoListId || !task)
-      return res
-        .status(400)
-        .json({ message: "no todolist id or new task providcd .ed." });
-
-    const todolist = await TodoLists.getTodoList(todoListId);
-    if (!todolist || todolist.userId !== userId)
-      return res.status(404).json({ message: "Todolist does not exist" });
-
-    const updatedTodoList = await TodoLists.addToTodoList(todoListId, task);
-
-    if (updatedTodoList) {
-      res.status(200).json(updatedTodoList);
-    } else {
-      res.status(500).send("Failed to add task to todo list");
-    }
-  }
-);
-
-todoListsRouter.post(
-  "/:todoListId/:taskId/delete",
+  "/:todoListId/:taskId",
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const {
@@ -110,6 +61,55 @@ todoListsRouter.post(
       res.status(200).json(updatedTodoList);
     } else {
       res.status(404).send("Task not found");
+    }
+  }
+);
+
+todoListsRouter.delete(
+  "/:id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const {
+      token: { sub: userId },
+    } = req;
+
+    const todolist = await TodoLists.getTodoList(id);
+
+    if (!todolist || todolist.userId !== userId)
+      return res.status(404).json({ message: "Todolist does not exist" });
+
+    const deleted = await TodoLists.deleteTodolist(id);
+
+    if (deleted) return res.status(200).send("Todo list deleted");
+    return res.status(404).send("Todo list not found");
+  }
+);
+
+todoListsRouter.post(
+  "/:todoListId",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const {
+      token: { sub: userId },
+    } = req;
+    const { todoListId } = req.params;
+    const { task }: { task: string } = req.body;
+    if (!todoListId || !task)
+      return res
+        .status(400)
+        .json({ message: "no todolist id or new task providcd .ed." });
+
+    const todolist = await TodoLists.getTodoList(todoListId);
+    if (!todolist || todolist.userId !== userId)
+      return res.status(404).json({ message: "Todolist does not exist" });
+
+    const updatedTodoList = await TodoLists.addToTodoList(todoListId, task);
+
+    if (updatedTodoList) {
+      res.status(200).json(updatedTodoList);
+    } else {
+      res.status(500).send("Failed to add task to todo list");
     }
   }
 );

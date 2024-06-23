@@ -60,17 +60,17 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    depends_on:
-      - backend
-      - keycloak
-    ports:
-      - 3000:3000
-    env_file:
-      - ./frontend/.env
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - backend
+  #     - keycloak
+  #   ports:
+  #     - 3000:3000
+  #   env_file:
+  #     - ./frontend/.env
       
 volumes:
   mongo_data:

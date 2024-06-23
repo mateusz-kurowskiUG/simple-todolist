@@ -5,15 +5,15 @@ import TodoListItem from "./todolist-item";
 import { createId } from "@paralleldrive/cuid2";
 
 const YourTodoLists = () => {
-	const { todolists } = useUserTodolistsStore();
+	const { todoLists } = useUserTodolistsStore();
 
 	return (
 		<div className="space-y-6">
-			{todolists.length === 0 ? (
+			{todoLists.length === 0 ? (
 				<div className=" text-center text-xl">No todolists yet.</div>
 			) : (
 				<div className="flex flex-col justify-center space-y-5 m-5">
-					{todolists.map((todoList) => (
+					{todoLists.map((todoList) => (
 						<TodoListItem key={createId()} todoList={todoList} />
 					))}
 				</div>
