@@ -1,36 +1,10 @@
-# mongo-setup.yaml
-
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mongo-pv
-spec:
-  capacity:
-    storage: 128Mi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /mnt/data/mongo
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 128Mi
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mongo
 spec:
-  replicas: 1
+  serviceName: mongo
+  replicas: 1  # Adjust as needed
   selector:
     matchLabels:
       app: mongo
@@ -40,70 +14,36 @@ spec:
         app: mongo
     spec:
       containers:
-      - name: mongo
-        image: mongo:latest
-        ports:
-        - containerPort: 27017
-        env:
-        - name: MONGO_INITDB_ROOT_USERNAME
-          value: "root"
-        - name: MONGO_INITDB_ROOT_PASSWORD
-          value: "example"
-        volumeMounts:
-        - mountPath: /data/db
-          name: mongo-storage
-      volumes:
-      - name: mongo-storage
-        persistentVolumeClaim:
-          claimName: mongo-pvc
+        - name: mongo
+          image: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: example
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi  # Adjust storage size as needed
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo
 spec:
-  ports:
-  - port: 27017
   selector:
     app: mongo
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mongo-express
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mongo-express
-  template:
-    metadata:
-      labels:
-        app: mongo-express
-    spec:
-      containers:
-      - name: mongo-express
-        image: mongo-express:latest
-        ports:
-        - containerPort: 8081
-        env:
-        - name: ME_CONFIG_MONGODB_ADMINUSERNAME
-          value: "root"
-        - name: ME_CONFIG_MONGODB_ADMINPASSWORD
-          value: "example"
-        - name: ME_CONFIG_MONGODB_URL
-          value: "mongodb://root:example@mongo:27017/"
-        - name: ME_CONFIG_BASICAUTH
-          value: "false"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongo-express
-spec:
-  type: NodePort
   ports:
-  - port: 8081
-    nodePort: 30002
-  selector:
-    app: mongo-express
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

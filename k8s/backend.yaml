@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: mkurowskiug/tc-backend:latest
+          envFrom:
+            - secretRef:
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secrets
+type: Opaque
+data:
+  MONGO_URI: bW9uZ29kYjovL21vbmdvOjI3MDE3L3NpbXBsZS10b2RvbGlzdHM=
+  MONGO_USER: cm9vdA==
+  MONGO_PASSWORD: ZXhhbXBsZQ==
+  KC_ADMIN_USER: YWRtaW4=
+  KC_ADMIN_PASS: YWRtaW4=
+  KC_CLIENT: dG9kb2xpc3QtYmFja2VuZA==
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  BACKEND_PORT: "5000"
+  REALM_PUBLIC: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvUoVQeOc8tv7WXSLBu/bk9CDI/14u+Af52QJximjMCZTXyPCt8uB7/0AlIoQhv73inQMSy2ih58BnEvV1napN6nLebHoZEJmux5/YgSdPKqicMnEByAi56o4cSHD2PKeAYoHHpu2jFig3UuoV9IULg39HoL+1muvYVni4CJczJX+3/gduebJgqbvSo77pTltZ6UU3O/GuttgAVUbSNAP3v+oXLz3JZOSs/kw4dMZPRoePtPdwOtVaXuk/A/FbhXpWP5TxHO/D9tWlZ/7fFQ8o3ENczOnYiW3nTFqrwcO9uB2we2OVOmMPzwC0Jgdp4lKICpxEu+Nf07dH18wufKJjwIDAQAB"
