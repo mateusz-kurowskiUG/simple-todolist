@@ -11,17 +11,19 @@ services:
     environment:
       POSTGRES_PASSWORD: example
     
-
   keycloak:
     restart: always
     depends_on:
       - postgres
-    image: mkurowskiug/tc-keycloak:latest
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
       - "8080:8080"
+
 
   mongo:
     image: mongo
@@ -32,9 +34,13 @@ services:
     volumes:
     - mongo_data:/data/db
 
+
+
   backend:
     restart: always
-    image: mkurowskiug/tc-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     env_file:
@@ -43,6 +49,7 @@ services:
       - keycloak
       - mongo
     working_dir: /backend
+
 
   mongo-express:
     image: mongo-express
@@ -55,9 +62,10 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
 
-
   frontend:
-    image: mkurowskiug/tc-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     depends_on:
       - backend
       - keycloak
@@ -65,6 +73,7 @@ services:
       - 3000:3000
     env_file:
       - ./frontend/.env
+
       
 volumes:
   mongo_data:
