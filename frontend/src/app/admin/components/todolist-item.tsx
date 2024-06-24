@@ -1,6 +1,4 @@
-import ITask from "@/app/interfaces/ITask";
 import type ITodoList from "@/app/interfaces/ITodoList";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 import { Tr, Td } from "react-super-responsive-table";
@@ -15,7 +13,7 @@ const TodoListItem = ({
 	return (
 		<Tr className="flex-col df-full">
 			<Td>
-				<Link href={`./todolists/${_id}`}>
+				<Link href={`/admin/${_id}`}>
 					<span className="text-blue-600">...{_id.slice(-6)}</span>
 				</Link>
 			</Td>

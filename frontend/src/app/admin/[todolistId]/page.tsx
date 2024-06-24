@@ -2,7 +2,6 @@
 import type ITodoList from "@/app/interfaces/ITodoList";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { getTodoListById } from "../../queries/admin-todolists";
 import { useSession } from "next-auth/react";
 import type ICustomSession from "@/interfaces/ICustomSession";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { getTodoListById } from "../queries/admin-todolists";
 
 const Page = ({ params }: { params: { todolistId: string } }) => {
 	const { toast } = useToast();
@@ -21,19 +21,26 @@ const Page = ({ params }: { params: { todolistId: string } }) => {
 		queryKey: ["todolist"],
 		queryFn: () => getTodoListById(params.todolistId, session.token),
 	});
-	if (isLoading) { return <p>Loading...</p>; }
-	if (error) { return <p>{error.message}</p>; }
+	if (isLoading) {
+		return <p>Loading...</p>;
+	}
+	if (error) {
+		return <p>{error.message}</p>;
+	}
 
 	const deleteItem = async (id: string, accessToken: string) => {
 		try {
-			await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/todolists/${id}`, {
-				headers: { Authorization: `Bearer ${accessToken}` },
-			});
+			await axios.delete(
+				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/todolists/${id}`,
+				{
+					headers: { Authorization: `Bearer ${accessToken}` },
+				},
+			);
 			toast({
 				title: "Delete successfull\nRedirecting to todolists in 5 seconds...",
 			});
 			setTimeout(() => {
-				router.push("/admin/todolists");
+				router.push("/admin");
 			}, 5000);
 		} catch (e) {
 			toast({

@@ -4,6 +4,7 @@ import Keycloak from "next-auth/providers/keycloak";
 import type { IToken } from "./interfaces/IToken";
 import type ICustomSession from "./interfaces/ICustomSession";
 import type IJwtHeader from "./interfaces/IJwtHeader";
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Keycloak({
@@ -16,6 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account }) {
+      // Initial sign in
       if (account) {
         const decodedJwt = jwtDecode<IJwtHeader>(account.access_token!);
         const { sid, email, name, realm_access } = decodedJwt;
@@ -34,20 +36,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
+      // Token refresh
       if (Date.now() < token.expires_at! * 1000) {
         return token;
       }
-
-      if (!token.refresh_token) {
-        throw new Error("Missing refresh token");
-      }
-
       try {
         const response = await fetch(process.env.AUTH_TOKEN_ENDPOINT!, {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
             client_id: process.env.AUTH_KEYCLOAK_ID!,
-            client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
             grant_type: "refresh_token",
             refresh_token: token.refresh_token!,
           }),
@@ -80,14 +77,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
       (session as unknown as ICustomSession).token = token.accessToken!;
 
+      if (token.error) {
+        session.error = token.error;
+      }
+
       return session;
     },
   },
   events: {
     async signOut({ token, session }) {
-      // Set token/session to {}, that would update the cilentside token/session as well
-      token = {};
-      session = {};
+      // Set token/session to {}, that would update the clients' token/session as well
+      token = {} as any;
+      session = {} as any;
     },
   },
 });

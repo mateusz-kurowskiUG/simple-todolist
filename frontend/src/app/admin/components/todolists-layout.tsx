@@ -11,7 +11,7 @@ import TodolistTable from "./_components/todolist-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { useRouter } from "next/navigation";
 
-const Page = () => {
+const TodoListsLayout = () => {
 	const { data: session } = useSession({ required: true }) as unknown as {
 		data: ICustomSession;
 	};
@@ -46,4 +46,4 @@ const Page = () => {
 	);
 };
 
-export default Page;
+export default TodoListsLayout;
